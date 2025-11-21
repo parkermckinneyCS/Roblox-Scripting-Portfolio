@@ -1,0 +1,25 @@
+local NPCAttacks  = require(game.ServerScriptService.Combat.NpcHandle.NPCAttacks)
+local CDHandle    = require(game.ServerScriptService.Combat.CDHandle)
+local Constants   = require(game.ReplicatedStorage.Constants)
+local Basic       = require(script.Parent.Basic)
+
+return function(Character, Target)
+	local move
+
+	local cds = CDHandle.GetCDs(Character)
+	local energy = Character.Status.Energy.Value
+
+	if not cds["Present"] and energy >= Constants.Skills["Present"].Cost then
+		move = "Present"
+	end
+
+	if not move and not cds["Frost Spit"] and energy >= Constants.Skills["Frost Spit"].Cost then
+		move = "Frost Spit"
+	end
+
+	if not move then
+		move, Target = Basic(Character, Target)
+	end
+
+	return move, Target
+end
