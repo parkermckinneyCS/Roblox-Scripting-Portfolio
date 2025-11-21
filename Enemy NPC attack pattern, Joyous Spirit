@@ -1,0 +1,51 @@
+local NPCAttacks  = require(game.ServerScriptService.Combat.NpcHandle.NPCAttacks)
+local CDHandle    = require(game.ServerScriptService.Combat.CDHandle)
+local Constants   = require(game.ReplicatedStorage.Constants)
+local Basic       = require(script.Parent.Basic)
+local BattleModule = require(game.ServerScriptService.Combat.BattleModule)
+
+return function(Character, Target)
+	local move
+
+	local cds = CDHandle.GetCDs(Character)
+	local energy = Character.Status.Energy.Value
+
+	local team = {}
+	local fightTag = Character:FindFirstChild("FightInProgress")
+	if fightTag then
+		team = BattleModule:GetAllies(Character, fightTag.Value)
+	end
+
+	if not cds["Frostbite"] and energy >= Constants.Skills["Frostbite"].Cost then
+		local shouldHeal = false
+
+		for _, ally in pairs(team) do
+			local hum = ally:FindFirstChild("Humanoid")
+			if hum and hum.Health <= hum.MaxHealth * 0.6 then
+				shouldHeal = true
+				break
+			end
+		end
+
+		if not shouldHeal then
+			local selfHum = Character:FindFirstChild("Humanoid")
+			if selfHum and selfHum.Health <= selfHum.MaxHealth * 0.6 then
+				shouldHeal = true
+			end
+		end
+
+		if shouldHeal then
+			move = "Frostbite"
+		end
+	end
+
+	if not move and not cds["Searing Frost"] and energy >= Constants.Skills["Searing Frost"].Cost then
+		move = "Searing Frost"
+	end
+
+	if not move then
+		move, Target = Basic(Character, Target)
+	end
+
+	return move, Target
+end
