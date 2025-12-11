@@ -1,0 +1,30 @@
+local function HandleSnorbTurn(Character)
+	if not Character then return end
+	local effects = Character:FindFirstChild("Effects")
+	if not effects then return end
+	local gears = MainModule.ReturnGear(Character)
+	if not table.find(gears, "Snorb") then
+		return
+	end
+	if effects:FindFirstChild("SnorbGlowing") then
+		return
+	end
+	local counter = effects.FindFirstChild("SnorbCounter")
+	if not counter then
+		counter = Instance.new("IntValue")
+		counter.Name = "SnorbCounter"
+		counter.Value = 0
+		counter.Parent = effects
+	end
+	counter.Value+=1
+	if counter.Value >= 3 then
+		counter.Value = 0
+		
+		local glow = Instance.new("BoolValue")
+		glow.Name = "SnorbGlowing"
+		glow.Parent = effects
+		
+		--add glow vfx
+	end
+end
+
