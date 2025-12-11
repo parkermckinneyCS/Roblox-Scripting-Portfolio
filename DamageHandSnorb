@@ -1,0 +1,22 @@
+	if table.find(TargetGears, "Snorb") then
+		
+		local effects = Target:FindFirstChild("Effects")
+		
+		if effects and effects.FindFirstChild("SnorbGlowing") then
+			effects.SnorbGlowing:Destroy()
+			--not sure if how removing or applying glow will work
+			local snorbDamage = Target.Humanoid.Maxhealth * 0.10 --10% hp of wearer to all enemies
+			local enemies = BattleModule:GetEnemyTeam(Target, BatTable)
+			
+			for i, enemy in ipairs(enemies) do
+				if enemy
+					and enemy:FindFirstChild("Humanoid")
+					and enemy:FindFirstChild("Humanoid").Health > 0 
+				then
+					module.Damage(enemy, snorbDamage, Target, false, false, "DOT")
+					--chill
+					StatusEff.AddEffect(enemy, "Cold", 2, Target)
+				end
+			end
+		end
+	end
